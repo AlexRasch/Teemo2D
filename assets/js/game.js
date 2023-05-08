@@ -1,7 +1,7 @@
 kaboom({
     global: true,
     fullscreen: true,
-    scale: 1,
+    scale: 1.2,
     debug: true,
     clearColor: [0, 0, 0, 1],
 })
@@ -25,24 +25,38 @@ scene("game", () => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     const map = [
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '                                                    ',
-        '====================================================',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                       %                                           ',
+        '                           ==                                      ',
+        '                    =========                                      ',
+        '                                                                -+   ',
+        'P        $    $      ^      ^      $           $                ()   ',
+        '========================================  ===========================',
+        '                                       =  =                        ',
+        '                                       ====                        ',
+
     ]
 
     const levelCfg = {
         width: 20,
         height: 20,
-        '=': [sprite('block', solid)]
+        '=': [sprite('block'), solid()],
+        '$': [sprite('coin')],
+        '%': [sprite('surprise')],
+
+        'P': [sprite('mario'), solid()],
+        '^': [sprite('evil-shroom'), solid(), 'coin-surprise'],
+
+        '-': [sprite('pipe-top-left'), solid(), scale(0.5)],
+        '+': [sprite('pipe-top-right'), solid(), scale(0.5)],
+        '(': [sprite('pipe-bottom-left'), solid(), scale(0.5)],
+        ')': [sprite('pipe-bottom-right'), solid(), scale(0.5)],
     }
 
     const gameLevel = addLevel(map,levelCfg)
