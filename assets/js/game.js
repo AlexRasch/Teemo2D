@@ -11,8 +11,10 @@ loadSprite('brick', 'brick.png')
 loadSprite('block', 'block.png')
 loadSprite('coin', 'coin.png')
 loadSprite('evil-shroom', 'evil-shroom.png')
-loadSprite('mario', 'mario.png')
 loadSprite('mushroom', 'mushroom.png')
+
+loadSprite('mario', 'mario.png')
+
 loadSprite('surprise', 'surprise.png')
 loadSprite('unboxed', 'unboxed.png')
 // Pipe
@@ -36,7 +38,7 @@ scene("game", () => {
         '                           ==                                      ',
         '                    =========                                      ',
         '                                                                -+   ',
-        'P        $    $      ^      ^      $           $                ()   ',
+        'P        $    $      ^      ^      $           $       #        ()   ',
         '========================================  ===========================',
         '                                       =  =                        ',
         '                                       ====                        ',
@@ -50,8 +52,8 @@ scene("game", () => {
         '$': [sprite('coin')],
         '%': [sprite('surprise')],
 
-        'P': [sprite('mario'), solid()],
         '^': [sprite('evil-shroom'), solid(), 'coin-surprise'],
+        '#': [sprite('mushroom'), solid()],
 
         '-': [sprite('pipe-top-left'), solid(), scale(0.5)],
         '+': [sprite('pipe-top-right'), solid(), scale(0.5)],
@@ -60,6 +62,65 @@ scene("game", () => {
     }
 
     const gameLevel = addLevel(map,levelCfg)
+
+    const scoreLable = add([
+        text('score'),
+        pos(30,6),
+        layer('ui'),
+        {
+            value: 'score',
+        }
+    ])
+
+
+    add([text('Level ' + 'test', pos(4,6))])
+
+    const player = add([
+        sprite('mario'), solid(), pos(20, 40), body(), origin('bot')
+    ])
+
+    // Movment
+    const PlayerMoveSpeed = 100;
+    const PlayerJump = 400;
+
+
+    keyDown('left', () => {
+        player.move(-PlayerMoveSpeed, 0)
+    })
+
+    keyDown('right', () => {
+        player.move(PlayerMoveSpeed, 0)
+    })
+
+    keyPress('space', () => {
+        if(player.grounded()){
+            player.jump(PlayerJump)
+        }
+    })
+
+    // Buffs
+    function PlayBuffBig(){
+        let timer = 0;
+        let bBig = false;
+        return {
+            update(){
+                if(bBig){
+                    timer -= dt()
+                    if(timer <= 0){
+                        this.smallify()
+                    }
+                }
+            },
+            bBig(){
+                return bBig
+            },
+            smallify() {
+                this.scale = vec2(1)
+                timer = 0
+                bBig = false
+            }
+        }
+    }
 
 })
 
