@@ -27,21 +27,21 @@ scene("game", () => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     const map = [
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                       %                                           ',
-        '                           ==                                      ',
-        '                    =========                                      ',
-        '                                                                -+   ',
-        'P        $    $      ^      ^      $           $       #        ()   ',
-        '========================================  ===========================',
-        '                                       =  =                        ',
-        '                                       ====                        ',
+        '                                                                    ',
+        '                                                                    ',
+        '                                                                    ',
+        '                                                                    ',
+        '                                                                    ',
+        '                                                                    ',
+        '                                                                    ',
+        '                       *                                            ',
+        '                           ==                                       ',
+        '       %            =========                                       ',
+        '                                                               -+   ',
+        'P            $      ^      ^      $           $       #        ()   ',
+        '=======================================  ===========================',
+        '                                      =  =                          ',
+        '                                      ====                          ',
 
     ]
 
@@ -49,11 +49,12 @@ scene("game", () => {
         width: 20,
         height: 20,
         '=': [sprite('block'), solid()],
-        '$': [sprite('coin')],
-        '%': [sprite('surprise')],
+        '$': [sprite('coin'), 'coin'],
+        '%': [sprite('surprise'), solid(), 'coin-surprise'],
+        '*': [sprite('surprise'), solid(), 'mushroom-surprise'],
 
         '^': [sprite('evil-shroom'), solid(), 'coin-surprise'],
-        '#': [sprite('mushroom'), solid()],
+        '#': [sprite('mushroom'), solid(), 'mushroom', body()],
 
         '-': [sprite('pipe-top-left'), solid(), scale(0.5)],
         '+': [sprite('pipe-top-right'), solid(), scale(0.5)],
@@ -76,30 +77,66 @@ scene("game", () => {
     add([text('Level ' + 'test', pos(4,6))])
 
     const player = add([
-        sprite('mario'), solid(), pos(20, 40), body(), origin('bot')
+        sprite('mario'),
+        solid(),
+        pos(20, 40),
+        body(),
+        PlayerBuffBig(),
+        origin('bot')
     ])
 
+    // Events
+
+    action('mushroom', (m) => {
+        m.move(10, 0)
+    })
+
+    player.collides('mushroom', (m) => {
+        destroy(m)
+        player.biggify(6)
+    })
+
+    player.collides('coin', (c) => {
+        destroy(c)
+        scoreLable.value++
+        scoreLable.text = scoreLable.value
+    })
+
+    player.on("headbump", (obj) => {
+        if (obj.is('coin-surprise')){
+            gameLevel.spawn('$', obj.gridPos.sub(0, 1))
+            destroy(obj)
+        }
+        if (obj.is('mushroom-surprise')){
+            gameLevel.spawn('#', obj.gridPos.sub(0, 1))
+            destroy(obj)
+        }
+    })
+
     // Movment
-    const PlayerMoveSpeed = 100;
-    const PlayerJump = 400;
+    const PlayerDefaultMoveSpeed = 100;
+    const PlayerDefaultJump = 400;
+    let PlayerCurrentJump = 400;
+    //  Part of buffs
+    const PlayerBigJump = 500;
 
 
     keyDown('left', () => {
-        player.move(-PlayerMoveSpeed, 0)
+        player.move(-PlayerDefaultMoveSpeed, 0)
     })
 
     keyDown('right', () => {
-        player.move(PlayerMoveSpeed, 0)
+        player.move(PlayerDefaultMoveSpeed, 0)
     })
 
     keyPress('space', () => {
         if(player.grounded()){
-            player.jump(PlayerJump)
+            player.jump(PlayerCurrentJump)
         }
     })
 
     // Buffs
-    function PlayBuffBig(){
+    function PlayerBuffBig(){
         let timer = 0;
         let bBig = false;
         return {
@@ -116,8 +153,15 @@ scene("game", () => {
             },
             smallify() {
                 this.scale = vec2(1)
+                PlayerCurrentJump = PlayerDefaultJump;
                 timer = 0
                 bBig = false
+            },
+            biggify(time){
+                this.scale = vec2(2)
+                PlayerCurrentJump = PlayerBigJump;
+                timer = time
+                bBig = true
             }
         }
     }
