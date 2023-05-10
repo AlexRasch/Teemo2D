@@ -24,7 +24,7 @@ loadSprite('pipe-top-right', 'pipe-top-right.png')
 loadSprite('pipe-bottom-left', 'pipe-bottom-left.png')
 loadSprite('pipe-bottom-right', 'pipe-bottom-right.png')
 
-scene("game", ({score}) => {
+scene("game", ({level, score}) => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     const map = [
@@ -65,16 +65,21 @@ scene("game", ({score}) => {
 
     const gameLevel = addLevel(map,levelCfg)
 
+    // UI
+    let levelLable = add([
+        text('Level: ' + 'test'),
+        pos(40, 40),
+        layer('ui')
+    ])
+
     let scoreLable = add([
         text(score),
-        pos(30,6),
+        pos(140, 40),
         layer('ui'),
         {
             value: score,
         }
     ])
-
-    add([text('Level ' + 'test', pos(4,6))])
 
     const player = add([
         sprite('mario'),
@@ -105,6 +110,15 @@ scene("game", ({score}) => {
         scoreLable.text = scoreLable.value
     })
 
+    player.collides('pipe', () => {
+        keyPress('down', () => {
+            go('game',{
+                level: (level + 1),
+                score: scoreLable.value
+            } )
+        })
+    })
+
     player.collides('dangerous', (d) => {
         if(bJumping){
             destroy(d)
@@ -119,10 +133,6 @@ scene("game", ({score}) => {
         if(player.pos.y >= PlayerFallDeath){
             go('lose', {score: scoreLable.value})
         }
-        // Score <---
-        console.log(scoreLable);
-        scoreLable.move(10, 0)
-
     })
 
     player.on("headbump", (obj) => {
@@ -207,4 +217,7 @@ scene('lose', ({score}) => {
 })
 
 
-start("game", {score: 0})
+start("game", {
+    level: 0,
+    score: 0
+    })
