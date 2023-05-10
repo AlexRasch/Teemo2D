@@ -57,8 +57,8 @@ scene("game", ({level, score}) => {
         '^': [sprite('evil-shroom'), solid(), 'dangerous'],
         '#': [sprite('mushroom'), solid(), 'mushroom', body()],
 
-        '-': [sprite('pipe-top-left'), solid(), scale(0.5)],
-        '+': [sprite('pipe-top-right'), solid(), scale(0.5)],
+        '-': [sprite('pipe-top-left'), solid(), scale(0.5), 'pipe'],
+        '+': [sprite('pipe-top-right'), solid(), scale(0.5), 'pipe'],
         '(': [sprite('pipe-bottom-left'), solid(), scale(0.5)],
         ')': [sprite('pipe-bottom-right'), solid(), scale(0.5)],
     }
@@ -67,13 +67,13 @@ scene("game", ({level, score}) => {
 
     // UI
     let levelLable = add([
-        text('Level: ' + 'test'),
+        text('Level: ' +  parseInt(level + 1)),
         pos(40, 40),
         layer('ui')
     ])
 
     let scoreLable = add([
-        text(score),
+        text('Score:' +  parseInt(score)),
         pos(140, 40),
         layer('ui'),
         {
@@ -107,7 +107,7 @@ scene("game", ({level, score}) => {
     player.collides('coin', (c) => {
         destroy(c)
         scoreLable.value++
-        scoreLable.text = scoreLable.value
+        scoreLable.text = 'Score:' + scoreLable.value
     })
 
     player.collides('pipe', () => {
