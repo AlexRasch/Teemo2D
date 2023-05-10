@@ -1,6 +1,7 @@
 kaboom({
     global: true,
-    fullscreen: true,
+    fullscreen: false,
+    canvas: document.querySelector("#gameCanvas"),
     scale: 1.2,
     debug: true,
     clearColor: [0, 0, 0, 1],
@@ -64,7 +65,7 @@ scene("game", ({score}) => {
 
     const gameLevel = addLevel(map,levelCfg)
 
-    const scoreLable = add([
+    let scoreLable = add([
         text(score),
         pos(30,6),
         layer('ui'),
@@ -115,10 +116,13 @@ scene("game", ({score}) => {
 
     player.action(() => {
         camPos(player.pos)
-
         if(player.pos.y >= PlayerFallDeath){
             go('lose', {score: scoreLable.value})
         }
+        // Score <---
+        console.log(scoreLable);
+        scoreLable.move(10, 0)
+
     })
 
     player.on("headbump", (obj) => {

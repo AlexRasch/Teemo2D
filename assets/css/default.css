@@ -1,5 +1,22 @@
 body {
-    background-image: url("/assets/img/bg.jpg");
+    background: url("/assets/img/bg.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     margin: 0;
     overflow: hidden;
+}
+
+#wrapper { 
+	display: flex; 
+	justify-content: center; /* center horizontally */ 
+	align-items: center; /* center vertically */ 
+} 
+
+#gameCanvas{
+    position:absolute; 
+    top:0;bottom:0;right:0;left:0; 
+    margin:auto; 
+    width: 80%;
 }
