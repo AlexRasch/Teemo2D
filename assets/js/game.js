@@ -14,7 +14,9 @@ loadSprite('coin', 'coin.png')
 loadSprite('evil-shroom', 'evil-shroom.png')
 loadSprite('mushroom', 'mushroom.png')
 
-loadSprite('mario', 'teemo.png')
+loadSprite('teemoR', 'teemoR.png')
+loadSprite('teemoL', 'teemoL.png')
+
 
 loadSprite('surprise', 'surprise.png')
 loadSprite('unboxed', 'unboxed.png')
@@ -28,21 +30,25 @@ scene("game", ({level, score}) => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
     const map = [
-        '                                                                    ',
-        '                                                                    ',
-        '                                                                    ',
-        '                                                                    ',
-        '                                                                    ',
-        '                      *                                             ',
-        '                                                                    ',
-        '                           ==                                       ',
-        '       %            =========                                       ',
-        '                                                                    ',
-        '                                                               -+   ',
-        'P            $   ^         ^      $           $                ()   ',
-        '=======================================  ===========================',
-        '                                      =  =                          ',
-        '                                      ====                          ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                                                                   ',
+        '                      *                                            ',
+        '                                                                   ',
+        '                           ==                                      ',
+        '       %            =========                                      ',
+        '                                                                   ',
+        '                                                              -+   ',
+        'P            $   ^         ^      $          $                ()   ',
+        '=====================================    ==========================',
+        '                                    =    =                         ',
+        '                                    =    =                         ',
+        '                                    =    =                         ',
+        '                                    =    =                         ',
+        '                                    =    =                         ',
+        '                                    =    =                         ',
 
     ]
 
@@ -65,30 +71,32 @@ scene("game", ({level, score}) => {
 
     const gameLevel = addLevel(map,levelCfg)
 
-    // UI
-    let levelLable = add([
-        text('Level: ' +  parseInt(level + 1)),
-        pos(40, 40),
-        layer('ui')
-    ])
-
-    let scoreLable = add([
-        text('Score:' +  parseInt(score)),
-        pos(140, 40),
-        layer('ui'),
-        {
-            value: score,
-        }
-    ])
-
-    const player = add([
-        sprite('mario'),
+    let player = add([
+        sprite('teemoR'),
         solid(),
         pos(20, 40),
         body(),
         PlayerBuffBig(),
         origin('bot')
     ])
+
+    // UI
+    const levelLable = add([
+        text('Level: ' +  parseInt(level + 1)),
+        pos(160, -200),
+        layer('ui')
+    ])
+
+    const scoreLable = add([
+        text('Score:' +  parseInt(score)),
+        pos(240, -200),
+        layer('ui'),
+        {
+            value: score,
+        }
+    ])
+
+
 
     // Events
     action('mushroom', (m) => {
@@ -130,6 +138,8 @@ scene("game", ({level, score}) => {
 
     player.action(() => {
         camPos(player.pos)
+        levelLable.pos = player.pos.add(160, -200);
+        scoreLable.pos = player.pos.add(240, -200);
         if(player.pos.y >= PlayerFallDeath){
             go('lose', {score: scoreLable.value})
         }
@@ -159,10 +169,13 @@ scene("game", ({level, score}) => {
 
     keyDown('left', () => {
         player.move(-PlayerDefaultMoveSpeed, 0)
+        player.changeSprite("teemoL");
     })
 
     keyDown('right', () => {
         player.move(PlayerDefaultMoveSpeed, 0)
+        player.changeSprite("teemoR");
+
     })
 
     player.action(() => {
@@ -176,6 +189,15 @@ scene("game", ({level, score}) => {
             bJumping = true;
             player.jump(PlayerCurrentJump)
         }
+    })
+
+    // Game controll
+    keyPress('r', () => {
+        console.log('HitMe');
+    })
+
+    keyPress('p', () => {
+
     })
 
     // Buffs
@@ -213,7 +235,8 @@ scene("game", ({level, score}) => {
 
 // Scenes
 scene('lose', ({score}) => {
-    add([text(score, 32), origin('center'), pos(width()/2, height()/2)])
+    add([text('Game Over', 32), origin('center'), pos(width()/2, height()/3)])
+    add([text('Score:' + score, 32), origin('center'), pos(width()/2, height()/2)])
 })
 
 
