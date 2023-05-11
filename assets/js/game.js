@@ -1,4 +1,6 @@
 import maps from './maps.js';
+import levelCfg from './levelConfig.js';
+
 
 kaboom({
     global: true,
@@ -33,25 +35,10 @@ loadSprite('pipe-bottom-right', 'pipe-bottom-right.png')
 scene("game", ({level, score}) => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
-    const levelCfg = {
-        width: 20,
-        height: 20,
-        '=': [sprite('block'), solid()],
-        '$': [sprite('coin'), 'coin'],
-        '%': [sprite('surprise'), solid(), 'coin-surprise'],
-        '*': [sprite('surprise'), solid(), 'mushroom-surprise'],
-
-        '^': [sprite('evil-shroom'), solid(), 'dangerous'],
-        '#': [sprite('mushroom'), solid(), 'mushroom', body()],
-
-        'T': [sprite('tristana'), solid(), 'tristana', body()],
-        '-': [sprite('pipe-top-left'), solid(), scale(0.5), 'pipe'],
-        '+': [sprite('pipe-top-right'), solid(), scale(0.5), 'pipe'],
-        '(': [sprite('pipe-bottom-left'), solid(), scale(0.5)],
-        ')': [sprite('pipe-bottom-right'), solid(), scale(0.5)],
-    }
-
-    const gameLevel = addLevel(maps[level],levelCfg)
+    const gameLevel = addLevel(
+            maps[level], 
+            levelCfg(sprite, solid, body, scale)
+        );
 
     let player = add([
         sprite('teemoR'),
@@ -180,6 +167,7 @@ scene("game", ({level, score}) => {
     // Game controll
     keyPress('r', () => {
         console.log('HitMe');
+        
     })
 
     keyPress('p', () => {
