@@ -1,3 +1,5 @@
+import maps from './maps.js';
+
 kaboom({
     global: true,
     fullscreen: false,
@@ -14,9 +16,11 @@ loadSprite('coin', 'coin.png')
 loadSprite('evil-shroom', 'evil-shroom.png')
 loadSprite('mushroom', 'mushroom.png')
 
+loadSprite('tristana', 'tristana.png')
+
+// Player
 loadSprite('teemoR', 'teemoR.png')
 loadSprite('teemoL', 'teemoL.png')
-
 
 loadSprite('surprise', 'surprise.png')
 loadSprite('unboxed', 'unboxed.png')
@@ -29,29 +33,6 @@ loadSprite('pipe-bottom-right', 'pipe-bottom-right.png')
 scene("game", ({level, score}) => {
     layers(['bg', 'obj', 'ui'], 'obj')
 
-    const map = [
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                                                                   ',
-        '                      *                                            ',
-        '                                                                   ',
-        '                           ==                                      ',
-        '       %            =========                                      ',
-        '                                                                   ',
-        '                                                              -+   ',
-        'P            $   ^         ^      $          $                ()   ',
-        '=====================================    ==========================',
-        '                                    =    =                         ',
-        '                                    =    =                         ',
-        '                                    =    =                         ',
-        '                                    =    =                         ',
-        '                                    =    =                         ',
-        '                                    =    =                         ',
-
-    ]
-
     const levelCfg = {
         width: 20,
         height: 20,
@@ -63,13 +44,14 @@ scene("game", ({level, score}) => {
         '^': [sprite('evil-shroom'), solid(), 'dangerous'],
         '#': [sprite('mushroom'), solid(), 'mushroom', body()],
 
+        'T': [sprite('tristana'), solid(), 'tristana', body()],
         '-': [sprite('pipe-top-left'), solid(), scale(0.5), 'pipe'],
         '+': [sprite('pipe-top-right'), solid(), scale(0.5), 'pipe'],
         '(': [sprite('pipe-bottom-left'), solid(), scale(0.5)],
         ')': [sprite('pipe-bottom-right'), solid(), scale(0.5)],
     }
 
-    const gameLevel = addLevel(map,levelCfg)
+    const gameLevel = addLevel(maps[level],levelCfg)
 
     let player = add([
         sprite('teemoR'),
@@ -95,8 +77,6 @@ scene("game", ({level, score}) => {
             value: score,
         }
     ])
-
-
 
     // Events
     action('mushroom', (m) => {
@@ -127,6 +107,12 @@ scene("game", ({level, score}) => {
         })
     })
 
+    player.collides('tristana', () => {
+        go('victory',{
+            score: scoreLable.value
+        } )
+    })
+
     player.collides('dangerous', (d) => {
         if(bJumping){
             destroy(d)
@@ -138,8 +124,8 @@ scene("game", ({level, score}) => {
 
     player.action(() => {
         camPos(player.pos)
-        levelLable.pos = player.pos.add(160, -200);
-        scoreLable.pos = player.pos.add(240, -200);
+        levelLable.pos = player.pos.add(160, -230);
+        scoreLable.pos = player.pos.add(240, -230);
         if(player.pos.y >= PlayerFallDeath){
             go('lose', {score: scoreLable.value})
         }
@@ -236,6 +222,10 @@ scene("game", ({level, score}) => {
 // Scenes
 scene('lose', ({score}) => {
     add([text('Game Over', 32), origin('center'), pos(width()/2, height()/3)])
+    add([text('Score:' + score, 32), origin('center'), pos(width()/2, height()/2)])
+})
+scene('victory', ({score}) => {
+    add([text('Victory', 32), origin('center'), pos(width()/2, height()/3)])
     add([text('Score:' + score, 32), origin('center'), pos(width()/2, height()/2)])
 })
 
