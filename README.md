@@ -7,4 +7,6 @@ Teemo's friend and fellow defender of Bandle City, has been kidnapped by Veigar,
 Gameplay
 The game is a 2D side-scrolling platformer, where players control Teemo as he makes his way through various levels filled with obstacles, enemies, and traps. 
 
+
+Demo: <a href="https://alexrasch.github.io/Teemo2D/">https://alexrasch.github.io/Teemo2D/</a>
 Create with <a href="https://kaboomjs.com/">Kaboom.js</a>
